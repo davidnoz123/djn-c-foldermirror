@@ -1,2 +1,5 @@
 # djn-c-foldermirror
-Go to the latest branch '0.1'
+A multithreaded C tool for doing backups of modified files from a source directory to a destination directory. 
+Does not delete files in the destination directory.
+Modular C code that runs only on Windows using a minimal set of Windows API functions.
+
