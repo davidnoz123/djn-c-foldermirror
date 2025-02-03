@@ -472,7 +472,7 @@ exit_with_failure:;
 }
 
 #define GETLASTERROR_SILENT 1
-#define GETLASTERROR_printf(getlasterror_friendly_name, src_file) printf("%s(%d):" getlasterror_friendly_name ":'%ls'\n", __FILE__, __LINE__, src_file);
+#define GETLASTERROR_printf(getlasterror_friendly_name, src_file) if(!(GETLASTERROR_SILENT)) {printf("%s(%d):" getlasterror_friendly_name ":'%ls'\n", __FILE__, __LINE__, src_file);}
 
 int WinAPICallWrapperStats_CopyFile(WinAPICallWrapperStats o, cbxCopyFile_copyProgress cbCopyProgress, void * vCopyProgressCtx, wchar_t *src_file, wchar_t *dst_file, __int64 size_src, LONGLONG *totalCopyBytes_QuadPart) {
   int m_stop = 0, ret;
