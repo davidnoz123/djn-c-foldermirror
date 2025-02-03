@@ -9,12 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3  # Checkout your code
       - name: Set up MSVC environment
-        #shell: cmd
+        shell: cmd
         run: |
           # choco install visualstudio2022buildtools --no-progress
           # choco install visualstudio2022-workload-vctools --no-progress
           dir "C:\Program Files (x86)\Microsoft Visual Studio"
-          cmd /C "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+          "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
           cl /Zi /DDEBUG folder_mirror.c
           .\folder_mirror.exe
           
