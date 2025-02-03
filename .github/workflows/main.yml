@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3  
       - name: Set up MSVC environment, compile and run
-        shell: cmd
         run: |
           ${{ '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && cl /Zi /DDEBUG folder_mirror.c && .\folder_mirror.exe' }}
           
