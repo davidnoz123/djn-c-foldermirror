@@ -1,6 +1,7 @@
 
 
 // %comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+// %comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
 // cl /Zi /DDEBUG folder_mirror.c
 // cl /O2 folder_mirror.c
 
@@ -75,12 +76,6 @@ typedef struct RateSmoother_s * RateSmoother;
   (o)->window_y[(o)->observation_count % (o)->window_size] = y; \
   (o)->observation_count++; \
 }
-
-typedef DWORD (* CALLBACK cbxCopyFile_copyProgress)(
-         LARGE_INTEGER totalSize, LARGE_INTEGER totalTransferred,
-         LARGE_INTEGER streamSize, LARGE_INTEGER streamTransferred,
-         DWORD streamNo, DWORD callbackReason, HANDLE src, HANDLE dst,
-         LPVOID data);
 
 static LARGE_INTEGER QueryPerformanceCounter_Freq = {0};
 
@@ -474,7 +469,7 @@ exit_with_failure:;
 #define GETLASTERROR_SILENT 1
 #define GETLASTERROR_printf(getlasterror_friendly_name, src_file) if(!(GETLASTERROR_SILENT)) {printf("%s(%d):" getlasterror_friendly_name ":'%ls'\n", __FILE__, __LINE__, src_file);}
 
-int WinAPICallWrapperStats_CopyFile(WinAPICallWrapperStats o, cbxCopyFile_copyProgress cbCopyProgress, void * vCopyProgressCtx, wchar_t *src_file, wchar_t *dst_file, __int64 size_src, LONGLONG *totalCopyBytes_QuadPart) {
+int WinAPICallWrapperStats_CopyFile(WinAPICallWrapperStats o, LPPROGRESS_ROUTINE cbCopyProgress, void * vCopyProgressCtx, wchar_t *src_file, wchar_t *dst_file, __int64 size_src, LONGLONG *totalCopyBytes_QuadPart) {
   int m_stop = 0, ret;
   int getlasterror;
   
