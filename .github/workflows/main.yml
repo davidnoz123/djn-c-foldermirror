@@ -11,6 +11,6 @@ jobs:
       - name: Set up MSVC environment
         shell: cmd
         run: |
-          ${{ '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && cl /Zi /DDEBUG folder_mirror.c' }}
-          .\folder_mirror.exe
+          ${{ '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && del .\folder_mirror.exe && cl /Zi /DDEBUG folder_mirror.c && .\folder_mirror.exe' }}
+          
           
