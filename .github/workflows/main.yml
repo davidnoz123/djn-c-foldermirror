@@ -11,12 +11,6 @@ jobs:
       - name: Set up MSVC environment
         shell: cmd
         run: |
-          choco install visualstudio2022buildtools --no-progress
-          choco install visualstudio2022-workload-vctools --no-progress
-          "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
-      - name: Build the project with MSVC
-        run: |
-          cl /Zi /DDEBUG folder_mirror.c
-      - name: Run the project
-        run: |
+          ${{ '"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\VsDevCmd.bat" && cl /Zi /DDEBUG folder_mirror.c' }}
           .\folder_mirror.exe
+          
