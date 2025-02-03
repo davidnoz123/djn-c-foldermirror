@@ -1,7 +1,8 @@
 
 
-// %comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-// cl /Zi /DDEBUG folder_mirror.c shell32.lib && folder_mirror.exe
+// %comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+// cl /Zi /DDEBUG folder_mirror.c
+// cl /O2 folder_mirror.c
 
 #include <windows.h>
 #include <stdlib.h>
@@ -1975,22 +1976,24 @@ int SyncSrc2Dst_Run(SyncSrc2Dst o, wchar_t * src_dir, wchar_t * dst_dir, int ski
   }
   o->pfc = NULL;  
   
-  HeartbeatThread_Stop(hb); 
-  HeartbeatThread_Join(hb, -1, &is_alive);
-  SyncSrc2Dst_cbHeartbeatThread_Callback(o, hb, -1);
-  RecursiveMirrorScan2_Free(rms);
-  RecursiveScan2_Free(dst);  
-  RecursiveScan2_Free(src);  
-  HeartbeatThread_Free(hb);
+  #define z2025_02_03_13_35_exit_code(_ff_) \
+  _ff_(HeartbeatThread_Stop(hb)) \
+  _ff_(HeartbeatThread_Join(hb, -1, &is_alive)) \
+  _ff_(SyncSrc2Dst_cbHeartbeatThread_Callback(o, hb, -1)) \
+  _ff_(RecursiveMirrorScan2_Free(rms)) \
+  _ff_(RecursiveScan2_Free(dst)) \
+  _ff_(RecursiveScan2_Free(src)) \
+  _ff_(HeartbeatThread_Free(hb)) \
+  
+  #define z2025_02_03_13_35_exit_code_0(code) \
+  printf("Waiting " #code " ...\n"); \
+  code; \
+  printf("Waiting " #code " Complete\n"); \
+  
+  z2025_02_03_13_35_exit_code(z2025_02_03_13_35_exit_code_0)
   return 0;
 exit_with_failure:;
-  HeartbeatThread_Stop(hb); 
-  HeartbeatThread_Join(hb, -1, &is_alive);
-  SyncSrc2Dst_cbHeartbeatThread_Callback(o, hb, -1);
-  RecursiveMirrorScan2_Free(rms);
-  RecursiveScan2_Free(dst);
-  RecursiveScan2_Free(src);  
-  HeartbeatThread_Free(hb);
+  z2025_02_03_13_35_exit_code(z2025_02_03_13_35_exit_code_0)
   return 1;    
 }
 
@@ -2571,14 +2574,14 @@ int SemaphoreDriver_Test_VisitFile(void *cbCtx, RecursiveScan2 src, RecursiveSca
   return ctx->total_queued_jobs > 50000 ? 1 : 0;
 }
 
-int wmain(int argc, wchar_t**argv) { // test_main
-  struct ParallelFileComparer_s pfc_s, * const pfc = &pfc_s;
-  struct RecursiveScan2_s src_s, * const src = &src_s;
-  struct RecursiveScan2_s dst_s, * const dst = &dst_s;
-  struct RecursiveScan2_s rss_s, * const rss = &rss_s;
-  struct RecursiveMirrorScan2_s rms_s, * const rms = &rms_s; 
-  struct CopyDirRecursion_s cdr_s, * const cdr = &cdr_s; 
-  struct SyncSrc2Dst_s ss2d_s, * const ss2d = &ss2d_s; 
+int folder_mirror_development_main() { // test_main
+  struct ParallelFileComparer_s pfc_s = {0}, * const pfc = &pfc_s;
+  struct RecursiveScan2_s src_s = {0}, * const src = &src_s;
+  struct RecursiveScan2_s dst_s = {0}, * const dst = &dst_s;
+  struct RecursiveScan2_s rss_s = {0}, * const rss = &rss_s;
+  struct RecursiveMirrorScan2_s rms_s = {0}, * const rms = &rms_s; 
+  struct CopyDirRecursion_s cdr_s = {0}, * const cdr = &cdr_s; 
+  struct SyncSrc2Dst_s ss2d_s = {0}, * const ss2d = &ss2d_s; 
   int is_alive, loop;
   LARGE_INTEGER tmp;
   double secs;  
@@ -2625,72 +2628,6 @@ int wmain(int argc, wchar_t**argv) { // test_main
     ParallelFileComparer_Free(pfc);
     RecursiveScan2_Free(rss);
   }  
-  
-  if(argc > 1) {
-    #define z2020_09_11_11_57(_ff_) \
-    _ff_(L"/?") \
-    _ff_(L"-h") \
-    _ff_(L"--help") \
-    
-    #define z2020_09_11_11_56_exp1(flag, help, handler) "  -%-11ls %s\n"
-    #define z2020_09_11_11_56_exp2(flag, help, handler) , flag, help
-    #define z2020_09_11_11_56_exp3(flag, help, handler_code) else if(wcsicmp(argv[i] + 1, flag) == 0) { handler_code; }
-    #define z2020_09_11_11_56(_ff_) \
-    _ff_(L"m", "Use file size and modified times to test for file changes; otherwise, compare file contents.", ss2d->use_modified_times_otherwise_compare_files = 1;)
-    
-    char * help = 
-    "Backup directory incrementally. Check for changes using either file size and modified times or using file comparison (default).\n"
-    "\n"
-    "backup <source-dir> <backup-dir> [-m]\n"
-    "\n"
-    "  <source-dir> Specifies the folder containing the source.\n"
-    "  <backup-dir> Specifies the folder storing the backup.\n"
-    z2020_09_11_11_56(z2020_09_11_11_56_exp1)
-    ;
-    l_dir = NULL;
-    r_dir = NULL;
-    for(i = 1; i < argc; i++) {
-      #define z2020_09_11_11_57_exp(hh) || (wcsicmp(argv[i], hh) == 0)
-      if(0 z2020_09_11_11_57(z2020_09_11_11_57_exp)) {
-        goto print_help;  
-      } else if(*argv[i] == '-') {
-        if(0) {} 
-        z2020_09_11_11_56(z2020_09_11_11_56_exp3) 
-        else {
-          printf("ERROR:Unrecognized option '%ls'. See help below\n", argv[i]);
-          goto print_help;           
-        }
-      } else if(!l_dir) {
-        l_dir = argv[i];
-      } else if(!r_dir) {
-        r_dir = argv[i];
-      } else {
-        printf("ERROR:More than one argument for <backup-dir>. See help below\n");
-        goto print_help; 
-      }
-    }    
-    if(!l_dir) {
-      printf("ERROR:Missing argument <source-dir>. See help below\n");
-      goto print_help;   
-    }
-    if(!r_dir) {
-      printf("ERROR:Missing argument <backup-dir>. See help below\n");
-      goto print_help;   
-    }    
-    if(0) {
-      QueryPerformanceCounter_Beg(&tmp);
-      if(SyncSrc2Dst_Run(ss2d, l_dir, r_dir, skip_copy, NULL)) {
-        SyncSrc2Dst_Print(ss2d, stdout, NULL);
-        goto_exit_with_failure(NULL);
-      }
-      QueryPerformanceCounter_End(tmp, &secs, NULL, NULL, NULL); 
-      SyncSrc2Dst_Print(ss2d, stdout, &secs);         
-    }
-    goto exit_early;
-print_help:;    
-    printf(help z2020_09_11_11_56(z2020_09_11_11_56_exp2));
-    goto exit_early;
-  }
   
   if(0) {
     system("rm -r C:\\analytics\\projects\\c\\root_r\\2");
@@ -2775,6 +2712,139 @@ exit_early:;
   RecursiveScan2_Free(dst);  
   RecursiveScan2_Free(src);  
   RecursiveMirrorScan2_Init(rms);
+  return 0;
+exit_with_failure:;
+  printf("exit_with_failure");
+  return 1;   
+
+}
+struct ArgParse_s {
+  wchar_t *l_dir;
+  wchar_t *r_dir;  
+  int use_modified_times_otherwise_compare_files;
+  int skip_copy;
+};
+
+int argparse(int argc, wchar_t**argv, struct ArgParse_s *_ap) {
+  
+  char __FILE___s[1024] = {0};
+  strcpy(__FILE___s, __FILE__);
+  __FILE___s[strlen(__FILE___s) - 2] = '\0';
+  
+  _ap->l_dir = NULL;
+  _ap->r_dir = NULL;  
+  _ap->use_modified_times_otherwise_compare_files = 1;
+  
+  #define z2020_09_11_11_57_help(_ff_) \
+  _ff_(L"/?") \
+  _ff_(L"-h") \
+  _ff_(L"--help") \
+  
+  #define z2020_09_11_11_56_exp1(flag, help, handler) "  -%-11ls %s\n"
+  #define z2020_09_11_11_56_exp2(flag, help, handler) , flag, help
+  #define z2020_09_11_11_56_exp3(flag, help, handler_code) else if(wcsicmp(argv[i] + 1, flag) == 0) { handler_code; }
+  #define z2020_09_11_11_56_flgs(_ff_) \
+  _ff_(L"c", "Compare file contents; otherwise use file size and modified times to test for file changes (default).", _ap->use_modified_times_otherwise_compare_files = 0;) \
+  _ff_(L"d", "Dry run. No copying of files.", _ap->skip_copy = 1;)
+  
+  char * help = 
+  "Backup directory incrementally. Check for changes using either file size and modified times (default) or using file comparison.\n"
+  "\n"
+  "%s.exe <source-dir> <backup-dir> [-m]\n"
+  "\n"
+  "  <source-dir> Specifies the folder containing the source.\n"
+  "  <backup-dir> Specifies the folder storing the backup.\n"
+  z2020_09_11_11_56_flgs(z2020_09_11_11_56_exp1)
+  ;  
+  
+  if(argc == 1) {
+    // No arguments
+    goto print_help;  
+  } else {
+
+    for(int i = 1; i < argc; i++) {
+      #define z2020_09_11_11_57_help_exp(hh) || (wcsicmp(argv[i], hh) == 0)
+      if(0 z2020_09_11_11_57_help(z2020_09_11_11_57_help_exp)) {
+        // Matched a help flag
+        goto print_help;  
+      } else if(*argv[i] == '-') {
+        // A flag argument
+        if(0) {} 
+        z2020_09_11_11_56_flgs(z2020_09_11_11_56_exp3) 
+        else {
+          // Unrecognized flag argument
+          printf("ERROR:Unrecognized option '%ls'. See help below\n", argv[i]);
+          goto print_help;           
+        }
+      } else if(!_ap->l_dir) {
+        // A positional argument
+        _ap->l_dir = argv[i];
+      } else if(!_ap->r_dir) {
+        // A positional argument
+        _ap->r_dir = argv[i];
+      } else {
+        // Overflow positional arguments
+        printf("ERROR:More than one argument for <backup-dir>. See help below\n");
+        goto print_help; 
+      }
+    }    
+    
+    // Handle missing flag arguments
+    if(!_ap->l_dir) {
+      printf("ERROR:Missing argument <source-dir>. See help below\n");
+      goto print_help;   
+    }
+    if(!_ap->r_dir) {
+      printf("ERROR:Missing argument <backup-dir>. See help below\n");
+      goto print_help;   
+    }    
+  }
+ 
+  goto exit_continue;
+print_help:;    
+  printf(help , __FILE___s z2020_09_11_11_56_flgs(z2020_09_11_11_56_exp2));
+  goto exit_early;
+    
+exit_continue:;
+  return 0;
+  exit_early:;
+  return 1;
+}
+
+int wmain(int argc, wchar_t**argv) { // test_main
+
+  struct ArgParse_s ap_s = {0}, * const ap = &ap_s;
+  struct ParallelFileComparer_s pfc_s = {0}, * const pfc = &pfc_s;; 
+  struct SyncSrc2Dst_s ss2d_s = {0}, * const ss2d = &ss2d_s;   
+  //int is_alive, loop;
+  LARGE_INTEGER tmp;
+  double secs;  
+  
+  if(argparse(argc, argv, ap)) {
+    goto exit_early;
+  }
+  
+  printf("beg\n");
+  if(SyncSrc2Dst_Init(ss2d)) {
+    goto_exit_with_failure(NULL);
+  }    
+  QueryPerformanceCounter_Beg(&tmp);
+  ss2d->use_modified_times_otherwise_compare_files = ap->use_modified_times_otherwise_compare_files;
+  if(ParallelFileComparer_Init(pfc, 2)) {
+    goto_exit_with_failure(NULL);
+  }      
+  if(SyncSrc2Dst_Run(ss2d, ap->l_dir, ap->r_dir, ap->skip_copy, pfc)) {
+    SyncSrc2Dst_Print(ss2d, stdout, NULL);
+    goto_exit_with_failure(NULL);
+  }
+  ParallelFileComparer_Free(pfc);    
+  QueryPerformanceCounter_End(tmp, &secs, NULL, NULL, NULL); 
+  printf("end:%f\n", secs);   
+  SyncSrc2Dst_Print(ss2d, stdout, &secs);     
+  
+exit_early:;  
+  ParallelFileComparer_Free(pfc);   
+  SyncSrc2Dst_Free(ss2d);
   return 0;
 exit_with_failure:;
   printf("exit_with_failure");
