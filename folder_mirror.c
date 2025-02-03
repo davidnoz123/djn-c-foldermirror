@@ -2749,16 +2749,17 @@ int argparse(int argc, wchar_t**argv, struct ArgParse_s *_ap) {
   _ff_(L"--help") \
   
   #define z2020_09_11_11_56_exp1(flag, help, handler) "  -%-11ls %s\n"
-  #define z2020_09_11_11_56_exp2(flag, help, handler) , flag, help
-  #define z2020_09_11_11_56_exp3(flag, help, handler_code) else if(wcsicmp(argv[i] + 1, flag) == 0) { handler_code; }
+  #define z2020_09_11_11_56_exp4(flag, help, handler) " [-" #flag "]"
+  #define z2020_09_11_11_56_exp2(flag, help, handler) , L#flag, help  
+  #define z2020_09_11_11_56_exp3(flag, help, handler_code) else if(wcsicmp(argv[i] + 1, L#flag) == 0) { handler_code; }
   #define z2020_09_11_11_56_flgs(_ff_) \
-  _ff_(L"c", "Compare file contents; otherwise use file size and modified times to test for file changes (default).", _ap->use_modified_times_otherwise_compare_files = 0;) \
-  _ff_(L"d", "Dry run. No copying of files.", _ap->skip_copy = 1;)
+  _ff_(c, "Compare file contents; otherwise use file size and modified times to test for file changes (default).", _ap->use_modified_times_otherwise_compare_files = 0;) \
+  _ff_(d, "Dry run. No copying of files.", _ap->skip_copy = 1;)
   
   char * help = 
   "Backup directory incrementally. Check for changes using either file size and modified times (default) or using file comparison.\n"
   "\n"
-  "%s.exe <source-dir> <backup-dir> [-m]\n"
+  "%s.exe <source-dir> <backup-dir> " z2020_09_11_11_56_flgs(z2020_09_11_11_56_exp4) "\n"
   "\n"
   "  <source-dir> Specifies the folder containing the source.\n"
   "  <backup-dir> Specifies the folder storing the backup.\n"
