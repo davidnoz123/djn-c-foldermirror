@@ -15,6 +15,7 @@ jobs:
           # choco install visualstudio2022-workload-vctools --no-progress
           dir "C:\Program Files (x86)\Microsoft Visual Studio"
           "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+          set PATH
           cl /Zi /DDEBUG folder_mirror.c
           .\folder_mirror.exe
           
