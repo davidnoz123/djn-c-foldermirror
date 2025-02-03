@@ -11,7 +11,8 @@ jobs:
       - name: Set up MSVC environment
         shell: cmd
         run: |
-          dir "C:\Program Files\Microsoft Visual Studio"
+          dir "C:\Program Files"
+          dir "C:\Program Files (x86)"
           "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
       - name: Build the project with MSVC
         run: |
