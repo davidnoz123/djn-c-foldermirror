@@ -13,7 +13,8 @@ jobs:
         run: |
           choco install visualstudio2022buildtools --no-progress
           choco install visualstudio2022-workload-vctools --no-progress
-          "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+          for /f "usebackq tokens=*" %%i in (`vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set VS_PATH=%%i
+          "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat"
       - name: Build the project with MSVC
         run: |
           cl /Zi /DDEBUG folder_mirror.c
