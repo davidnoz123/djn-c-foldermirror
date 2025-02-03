@@ -471,31 +471,39 @@ exit_with_failure:;
   return 1;      
 }
 
+#define GETLASTERROR_SILENT 1
+#define GETLASTERROR_printf(getlasterror_friendly_name, src_file) printf("%s(%d):" getlasterror_friendly_name ":'%ls'\n", __FILE__, __LINE__, src_file);
+
 int WinAPICallWrapperStats_CopyFile(WinAPICallWrapperStats o, cbxCopyFile_copyProgress cbCopyProgress, void * vCopyProgressCtx, wchar_t *src_file, wchar_t *dst_file, __int64 size_src, LONGLONG *totalCopyBytes_QuadPart) {
   int m_stop = 0, ret;
   int getlasterror;
   
   //printf("EXPORT \"%ls\" \"%ls\"\n", src_file, dst_file);
   //return 0;
+  #define GETLASTERROR_handlers_exp(is_error_otherwise_warning, which) \
+    case(which): \
+      GETLASTERROR_printf(#which, src_file) \
+      if(is_error_otherwise_warning) { \
+        goto exit_with_failure; \
+      } else { \
+        goto exit_with_warning; \
+      } \
+  
+  #define GETLASTERROR_handlers(_ff_) \
+  _ff_(0, ERROR_ACCESS_DENIED) \
+  _ff_(0, ERROR_INVALID_NAME) \
+  _ff_(0, ERROR_CANT_ACCESS_FILE) \
+  _ff_(0, ERROR_PATH_NOT_FOUND) \
+  _ff_(1, ERROR_DISK_FULL) \
+
   
   WinAPICallWrapperMacro(CopyFileExW, (src_file, dst_file, cbCopyProgress, vCopyProgressCtx, &m_stop, 0), &ret, o, &getlasterror, 
-    if(getlasterror == ERROR_ACCESS_DENIED) {
-      printf("%s(%d):ERROR_ACCESS_DENIED:'%ls'\n", __FILE__, __LINE__, src_file);        
-      goto exit_with_warning;
-    }         
-    if(getlasterror == ERROR_INVALID_NAME) {
-      printf("%s(%d):ERROR_INVALID_NAME:'%ls'\n", __FILE__, __LINE__, src_file);
-      goto exit_with_warning;
-    }               
-    if(getlasterror == ERROR_CANT_ACCESS_FILE) {
-      printf("%s(%d):ERROR_CANT_ACCESS_FILE:'%ls'\n", __FILE__, __LINE__, src_file);
-      goto exit_with_warning;
-    }         
-    if(getlasterror == ERROR_DISK_FULL) {
-      printf("%s(%d):ERROR_DISK_FULL:'%ls'\n", __FILE__, __LINE__, src_file);
-      goto exit_with_failure;
-    }         
-    goto_exit_with_failure(&getlasterror);  
+    switch(getlasterror) {
+    GETLASTERROR_handlers(GETLASTERROR_handlers_exp)
+    default:
+        printf("%s(%d):Unexpected getlasterror:%d:'%ls'\n", __FILE__, __LINE__, getlasterror, src_file);        
+        goto_exit_with_failure(&getlasterror);
+    } 
   );
   *totalCopyBytes_QuadPart += size_src;  
 exit_with_warning:;
@@ -990,16 +998,16 @@ int RecursiveScan2RecursionLevel_ObserveDirectory(RecursiveScan2RecursionLevel o
   WinAPICallWrapperMacro(FindFirstFileW, (path->wide, &o->findData), &o->findHandle, win_api_stats, &getlasterror, 
     if(getlasterror == ERROR_INVALID_NAME) {
       o->findHandle = INVALID_HANDLE_VALUE;
-      printf("ERROR_INVALID_NAME:'%ls'\n", path->wide);
+      GETLASTERROR_printf("ERROR_INVALID_NAME", path->wide)
       goto exit_with_warning;
     }
     if(getlasterror == ERROR_CANT_ACCESS_FILE) {
       o->findHandle = INVALID_HANDLE_VALUE;
-      printf("ERROR_CANT_ACCESS_FILE:'%ls'\n", path->wide);
+      GETLASTERROR_printf("ERROR_CANT_ACCESS_FILE", path->wide)
       goto exit_with_warning;
     }           
     if(getlasterror == ERROR_PATH_NOT_FOUND) {
-      printf("ERROR_PATH_NOT_FOUND:'%ls'\n", path->wide);
+      GETLASTERROR_printf("ERROR_PATH_NOT_FOUND", path->wide)
     }    
     goto_exit_with_failure(&getlasterror);
   )
@@ -1224,16 +1232,16 @@ int CopyDirRecursion_cbRecursiveScan2_BeforeRecursion(void *cbCtx, RecursiveScan
   if(!ctx->skip_copy) {
     WinAPICallWrapperMacro(CreateDirectoryExW, (src->path.wide, ctx->dst_ref->path.wide, NULL), &res, &ctx->win_api_stats, &getlasterror, 
       if(getlasterror == ERROR_INVALID_NAME) {
-        printf("ERROR_INVALID_NAME:'%ls'\n", src->path.wide);
+        GETLASTERROR_printf("ERROR_INVALID_NAME", src->path.wide)
         goto exit_with_skip_recursion;
       }
       if(getlasterror == ERROR_ACCESS_DENIED) {
-        printf("ERROR_ACCESS_DENIED:'%ls'\n", src->path.wide);
+        GETLASTERROR_printf("ERROR_ACCESS_DENIED", src->path.wide)
         goto exit_with_skip_recursion;
       }      
       if(getlasterror == ERROR_ALREADY_EXISTS) {
         *folder_already_exists = 1;
-        printf("ERROR_ALREADY_EXISTS:'%ls'\n", src->path.wide);
+        GETLASTERROR_printf("ERROR_ALREADY_EXISTS", src->path.wide)
         goto exit_with_skip_recursion;
       }
       printf("getlasterror=%d:'%ls':'%ls'\n", getlasterror, src->path.wide, ctx->dst_ref->path.wide);
