@@ -9,9 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3  # Checkout your code
       - name: Set up MSVC environment
-      - shell: cmd
         run: |
-          "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+          cmd /c "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
       - name: Build the project with MSVC
         run: |
           cl /Zi /DDEBUG folder_mirror.c
