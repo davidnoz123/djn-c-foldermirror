@@ -7,6 +7,10 @@ Compile:-
 ```sh
 %comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 cl /O2 folder_mirror.c
+
+
+%comspec% /k "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
+cl /O2 folder_mirror.c
 ```
 
 Help:-
