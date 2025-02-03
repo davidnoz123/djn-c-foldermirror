@@ -30,5 +30,5 @@ folder_mirror.exe <source-dir> <backup-dir> [-m]
 ![Demo](assets/console_demo.gif)
 
 ## Feedback
-Have questions or suggestions? [Open an issue](https://github.com/davidnoz123/djn-classes-foldermirror/issues).
+Have questions or suggestions? [Open an issue](https://github.com/davidnoz123/djn-c-foldermirror/issues).
 
