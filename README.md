@@ -15,10 +15,9 @@ cl /O2 folder_mirror.c
 
 Help:-
 ```sh
-folder_mirror.exe
 Backup directory incrementally. Check for changes using either file size and modified times (default) or using file comparison.
 
-folder_mirror.exe <source-dir> <backup-dir> [-m]
+folder_mirror.exe <source-dir> <backup-dir>  [-c] [-d]
 
   <source-dir> Specifies the folder containing the source.
   <backup-dir> Specifies the folder storing the backup.
